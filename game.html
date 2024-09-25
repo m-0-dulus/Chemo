@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Element Match</title>
+  <style>
+    /* Global Styles */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+    }
+    #game-container {
+      width: 800px;
+      margin: 40px auto;
+      text-align: center;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+    #element-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-gap: 20px;
+    }
+    #symbol-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-gap: 20px;
+    }
+    .element {
+      width: 100px;
+      height: 100px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      background-color: #f0f0f0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: move;
+    }
+    .symbol {
+      width: 100px;
+      height: 100px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      background-color: #f0f0f0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: move;
+    }
+    .correct {
+      background-color: #99ff99;
+    }
+    .incorrect {
+      background-color: #ff9999;
+    }
+    #timer {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    #level {
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div id="game-container">
+    <h1>Element Match</h1>
+    <p id="level">Level 1</p>
+    <p id="timer">Time: 60 seconds</p>
+    <div id="element-grid">
+      <!-- element names will be displayed here -->
+    </div>
+    <div id="symbol-grid">
+      <!-- element symbols will be displayed here -->
+    </div>
+    <p id="score">Score: 0</p>
+  </div>
+  <script>
+    // define elements and their symbols
+    const elements = [
+      { name: 'Hydrogen', symbol: 'H' },
+      { name: 'Helium', symbol: 'He' },
+      { name: 'Oxygen', symbol: 'O' },
+      { name: 'Nitrogen', symbol: 'N' },
+      { name: 'Carbon', symbol: 'C' },
+      { name: 'Fluorine', symbol: 'F' },
+      { name: 'Neon', symbol: 'Ne' },
+      { name: 'Sodium', symbol: 'Na' },
+    ];
+
+    // define levels
+    const levels = [
+      { elements: elements.slice(0, 4), time: 60 },
+      { elements: elements.slice(4, 8), time: 90 },
+      { elements: elements, time: 120 },
+    ];
+
+    let currentLevel = 0;
+    let score = 0;
+    let timeLeft = levels[currentLevel].time;
+
+    // display element names
+    levels[currentLevel].elements.forEach((element) => {
+      const elementDiv = document.createElement('div');
+      elementDiv.className = 'element';
+      elementDiv.textContent = element.name;
+      document.getElementById('element-grid').appendChild(elementDiv);
+    });
+
+    // display element symbols
+    levels[currentLevel].elements.forEach((element) => {
+      const symbolDiv = document.createElement('div');
+      symbolDiv.className = 'symbol';
+      symbolDiv.textContent = element.symbol;
+      symbolDiv.setAttribute('draggable', true);
+      document.getElementById('symbol-grid').appendChild(symbolDiv);
+    });
+
+    // add event listeners to symbols
+    document.querySelectorAll('.symbol').forEach((symbol) => {
+      symbol.addEventListener('dragstart', (e) => {
+        e.dataTransfer.setData('text', symbol.textContent);
+      });
+    });
+
+    // add event listeners to element names
+    document.querySelectorAll('.symbol').forEach((symbol) => {
+      symbol.addEventListener('dragstart', (e) => {
+        e.dataTransfer.setData('text', symbol.textContent);
+      });
+    });
+
+    // add event listeners to element names
+    document.querySelectorAll('.element').forEach((element) => {
+      element.addEventListener('dragover', (e) => {
+        e.preventDefault();
+      });
+      element.addEventListener('drop', (e) => {
+        e.preventDefault();
+        const symbol = e.dataTransfer.getData('text');
+        const elementName = element.textContent;
+        const correctSymbol = levels[currentLevel].elements.find((el) => el.name === elementName).symbol;
+        if (symbol === correctSymbol) {
+          // update score
+          score++;
+          document.getElementById('score').textContent = `Score: ${score}`;
+          // remove symbol from symbol grid
+          symbol.remove();
+          element.className += ' correct';
+        } else {
+          element.className += ' incorrect';
+        }
+      });
+    });
+
+    // start timer
+    setInterval(() => {
+      timeLeft--;
+      document.getElementById('timer').textContent = `Time: ${timeLeft} seconds`;
+      if (timeLeft === 0) {
+        // game over
+        alert(`Game over! Your score is ${score}.`);
+        // reset game
+        currentLevel = 0;
+        score = 0;
+        timeLeft = levels[currentLevel].time;
+        document.getElementById('element-grid').innerHTML = '';
+        document.getElementById('symbol-grid').innerHTML = '';
+        document.getElementById('score').textContent = `Score: 0`;
+        document.getElementById('level').textContent = `Level 1`;
+        document.getElementById('timer').textContent = `Time: 60 seconds`;
+        levels[currentLevel].elements.forEach((element) => {
+          const elementDiv = document.createElement('div');
+          elementDiv.className = 'element';
+          elementDiv.textContent = element.name;
+          document.getElementById('element-grid').appendChild(elementDiv);
+        });
+        levels[currentLevel].elements.forEach((element) => {
+          const symbolDiv = document.createElement('div');
+          symbolDiv.className = 'symbol';
+          symbolDiv.textContent = element.symbol;
+          symbolDiv.setAttribute('draggable', true);
+          document.getElementById('symbol-grid').appendChild(symbolDiv);
+        });
+      }
+    }, 1000);
+
+    // level up
+    document.getElementById('element-grid').addEventListener('drop', () => {
+      if (document.querySelectorAll('.element.correct').length === levels[currentLevel].elements.length) {
+        currentLevel++;
+        score += levels[currentLevel - 1].elements.length;
+        timeLeft = levels[currentLevel].time;
+        document.getElementById('element-grid').innerHTML = '';
+        document.getElementById('symbol-grid').innerHTML = '';
+        document.getElementById('score').textContent = `Score: ${score}`;
+        document.getElementById('level').textContent = `Level ${currentLevel + 1}`;
+        document.getElementById('timer').textContent = `Time: ${timeLeft} seconds`;
+        levels[currentLevel].elements.forEach((element) => {
+          const elementDiv = document.createElement('div');
+          elementDiv.className = 'element';
+          elementDiv.textContent = element.name;
+          document.getElementById('element-grid').appendChild(elementDiv);
+        });
+        levels[currentLevel].elements.forEach((element) => {
+          const symbolDiv = document.createElement('div');
+          symbolDiv.className = 'symbol';
+          symbolDiv.textContent = element.symbol;
+          symbolDiv.setAttribute('draggable', true);
+          document.getElementById('symbol-grid').appendChild(symbolDiv);
+        });
+      }
+    });
+  </script>
+</body>
+</html>
