@@ -5,10 +5,10 @@ This webapp aims to educate children in a practical, see to learn sense and also
 
 Planned Features-
 
-A 3D molecule renderer
-Chemistry Notes
-Chemistry Lectures
-A mini-game
-Quizzes
+A 3D molecule renderer <br>
+Chemistry Notes <br>
+Chemistry Lectures <br>
+A mini-game <br>
+Quizzes <br>
 
 
