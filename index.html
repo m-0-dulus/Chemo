@@ -1,0 +1,28 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chemistry Molecules</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>WELCOME TO CHEMO!</h1>
+    <input type="text" id="molecule-input" placeholder="Enter a molecule name">
+    <button id="search-button">Search</button>
+    <div class="molecule-viewer-container">
+      <canvas id="molecule-viewer" width="400" height="400"></canvas>
+    </div>
+    <div class="molecule-info-container">
+      <h2 id="molecule-name"></h2>
+      <p id="molecular-weight"></p>
+      <p id="boiling-point"></p>
+      <p id="melting-point"></p>
+    </div>
+  </div>
+
+  <script src="index.js"></script>
+</body>
+</html>
